@@ -1,12 +1,17 @@
 <script>
 </script>
 
-<div class="relative bg-black px-4 py-4 sm:px-6 lg:px-8 border-b border-gray-800">
+<div
+  class="relative bg-black px-4 py-4 sm:px-6 lg:px-8 border-b border-gray-800"
+>
   <div class="relative mx-auto max-w-7xl">
     <div class="flex items-center justify-between">
       <div class="shrink-0">
-        <a href="/" title="" class="flex">
-          <img class="w-auto h-8" src="/light.svg" alt="" />
+        <a href="/" title="" class="flex gap-5">
+          <img class="w-auto h-8" src="/logo.png" alt="" />
+          <h1 class="text-lg leading-loose tracking-wide font-extrabold">
+            Johnny Hsieh
+          </h1>
         </a>
       </div>
 
