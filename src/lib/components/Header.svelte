@@ -1,14 +1,31 @@
 <script>
   import { auth } from "$lib/config/firebase/firebase.config";
-  import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+  import {
+    GoogleAuthProvider,
+    signInWithPopup,
+    signOut,
+    onAuthStateChanged,
+  } from "firebase/auth";
   const provider = new GoogleAuthProvider();
+  let signIn = false;
 
   const login = () => {
+    if (signIn) {
+      signOut(auth);
+      return;
+    }
     signInWithPopup(auth, provider).then((result) => {
       const credential = GoogleAuthProvider.credentialFromResult(result);
       console.log(credential);
     });
   };
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      signIn = true;
+    } else {
+      signIn = false;
+    }
+  });
 </script>
 
 <div
@@ -26,7 +43,16 @@
       </div>
 
       <div class="flex sm:items-center sm:justify-end sm:space-x-4">
-        <button on:click={login}>Login</button>
+        <button
+          on:click={login}
+          class="text-lg leading-loose tracking-wide font-extrabold"
+        >
+          {#if signIn}
+            LogOut
+          {:else}
+            LogIn
+          {/if}
+        </button>
       </div>
     </div>
   </div>
