@@ -7,10 +7,13 @@
     onAuthStateChanged,
   } from "firebase/auth";
   const provider = new GoogleAuthProvider();
-  let signIn = false;
+
+  // states
+  let userInfo;
+  let admin = false
 
   const login = () => {
-    if (signIn) {
+    if (userInfo) {
       signOut(auth);
       return;
     }
@@ -18,14 +21,14 @@
   }
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      signIn = true;
+      userInfo = user;
       user.getIdTokenResult()
         .then(idTokenResult => {
-          if (!!idTokenResult.claims.admin) console.log('admin')
-          else console.log('regular')
+          if (!!idTokenResult.claims.admin) admin=idTokenResult.claims.admin
+          else admin=false
         })
     } else {
-      signIn = false;
+      userInfo = null;
     }
   });
 </script>
@@ -47,10 +50,11 @@
       <div class="flex sm:items-center sm:justify-end sm:space-x-4">
         <button
           on:click={login}
-          class="text-lg leading-loose tracking-wide font-extrabold"
+          class="text-lg leading-loose tracking-wide font-extrabold relative"
         >
-          {#if signIn}
-            LogOut
+          {#if userInfo}
+            <img class="max-w-12 rounded-full mb-4px" src={userInfo.photoURL} alt="avatar"/>
+            <span class="absolute bottom-0 left-1/2 text-xs transform -translate-x-1/2">{#if admin} admin {:else} basic {/if}</span>
           {:else}
             LogIn
           {/if}
