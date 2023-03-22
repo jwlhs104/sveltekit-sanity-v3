@@ -14,14 +14,16 @@
       signOut(auth);
       return;
     }
-    signInWithPopup(auth, provider).then((result) => {
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      console.log(credential);
-    });
-  };
+    signInWithPopup(auth, provider)
+  }
   onAuthStateChanged(auth, (user) => {
     if (user) {
       signIn = true;
+      user.getIdTokenResult()
+        .then(idTokenResult => {
+          if (!!idTokenResult.claims.admin) console.log('admin')
+          else console.log('regular')
+        })
     } else {
       signIn = false;
     }
