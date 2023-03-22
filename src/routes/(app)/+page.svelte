@@ -1,6 +1,13 @@
 <script lang="ts">
+  import { admin } from "$lib/stores";
   import { urlForImage } from "$lib/config/sanity";
   import type { PageData } from "./$types";
+
+  let isAdmin: boolean;
+
+  admin.subscribe((value: boolean) => {
+    isAdmin = value
+  })
 
   export let data: PageData;
 
@@ -54,7 +61,7 @@
     </div>
 
     <div class="w-full  mt-12">
-      {#if posts && posts.length > 0}
+      {#if posts && posts.length > 0 && isAdmin}
         <div class="mx-auto grid max-w-lg gap-5 lg:max-w-none lg:grid-cols-3">
           {#each posts as post}
             <a href="/posts/{post.slug}">

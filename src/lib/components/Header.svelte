@@ -1,4 +1,5 @@
 <script>
+  import { admin } from "$lib/stores";
   import { auth } from "$lib/config/firebase/firebase.config";
   import {
     GoogleAuthProvider,
@@ -10,7 +11,11 @@
 
   // states
   let userInfo;
-  let admin = false
+  let isAdmin;
+
+  admin.subscribe(value => {
+    isAdmin = value
+  })
 
   const login = () => {
     if (userInfo) {
@@ -24,11 +29,12 @@
       userInfo = user;
       user.getIdTokenResult()
         .then(idTokenResult => {
-          if (!!idTokenResult.claims.admin) admin=idTokenResult.claims.admin
-          else admin=false
+          if (!!idTokenResult.claims.admin) admin.set(idTokenResult.claims.admin)
+          else admin.set(false)
         })
     } else {
       userInfo = null;
+      admin.set(false)
     }
   });
 </script>
@@ -54,7 +60,7 @@
         >
           {#if userInfo}
             <img class="max-w-12 rounded-full mb-4px" src={userInfo.photoURL} alt="avatar"/>
-            <span class="absolute bottom-0 left-1/2 text-xs transform -translate-x-1/2">{#if admin} admin {:else} basic {/if}</span>
+            <span class="absolute bottom-0 left-1/2 text-xs transform -translate-x-1/2">{#if isAdmin} admin {:else} basic {/if}</span>
           {:else}
             LogIn
           {/if}
