@@ -23,6 +23,7 @@ export const GET: RequestHandler = () => {
 
 	return json({
 	  aes: trade_info_aes,
-	  sha: trade_sha
+	  sha: trade_sha,
+    orderNumber: `test_${date}`
 	})
 };

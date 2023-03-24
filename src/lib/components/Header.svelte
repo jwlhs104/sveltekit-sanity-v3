@@ -1,6 +1,6 @@
-<script>
+<script lang="ts">
   import { admin } from "$lib/stores";
-  import { auth } from "$lib/config/firebase/firebase.config";
+  import { auth, db } from "$lib/config/firebase/firebase.config";
   import NewWebpay from './NewWebpay.svelte'
   import {
     GoogleAuthProvider,
@@ -8,11 +8,13 @@
     signOut,
     onAuthStateChanged,
   } from "firebase/auth";
+  import { ref, onValue } from "firebase/database";
+  import type { UserInfo, User } from "firebase/auth";
   const provider = new GoogleAuthProvider();
 
   // states
-  let userInfo;
-  let isAdmin;
+  let userInfo: UserInfo | null;
+  let isAdmin: Boolean;
 
   admin.subscribe(value => {
     isAdmin = value
@@ -25,14 +27,22 @@
     }
     signInWithPopup(auth, provider)
   }
-  onAuthStateChanged(auth, (user) => {
+  const checkToken = (user: User) => {
+    user.getIdTokenResult()
+      .then(idTokenResult => {
+        if (!!idTokenResult.claims.admin) admin.set(idTokenResult.claims.admin)
+        else admin.set(false)
+      })
+  }
+  onAuthStateChanged(auth, async (user) => {
     if (user) {
       userInfo = user;
-      user.getIdTokenResult()
-        .then(idTokenResult => {
-          if (!!idTokenResult.claims.admin) admin.set(idTokenResult.claims.admin)
-          else admin.set(false)
-        })
+      checkToken(user)
+      const metadataRef = ref(db, 'metadata/' + user.uid + '/refreshTime');
+      onValue(metadataRef, async (snapshot) => {
+        await user.getIdToken(true);
+        checkToken(user)
+      })
     } else {
       userInfo = null;
       admin.set(false)
@@ -55,7 +65,7 @@
       </div>
 
       <div class="flex sm:items-center sm:justify-end sm:space-x-4">
-        <NewWebpay/>
+        <NewWebpay user={userInfo}/>
         <button
           on:click={login}
           class="text-lg leading-loose tracking-wide font-extrabold relative"
