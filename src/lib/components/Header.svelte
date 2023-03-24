@@ -1,6 +1,7 @@
 <script>
   import { admin } from "$lib/stores";
   import { auth } from "$lib/config/firebase/firebase.config";
+  import NewWebpay from './NewWebpay.svelte'
   import {
     GoogleAuthProvider,
     signInWithPopup,
@@ -54,6 +55,7 @@
       </div>
 
       <div class="flex sm:items-center sm:justify-end sm:space-x-4">
+        <NewWebpay/>
         <button
           on:click={login}
           class="text-lg leading-loose tracking-wide font-extrabold relative"
