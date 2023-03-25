@@ -17,6 +17,7 @@ export const GET: RequestHandler = () => {
     MerchantOrderNo: `test_${date}`, 
     Amt: 30,
     ItemDesc: 'test',
+    NotifyURL: 'https://us-central1-blog-eff28.cloudfunctions.net/processPayment'
   }
   let trade_info_aes = client.TradeInfo(trade_info).encrypt()
   let trade_sha = client.TradeInfo(trade_info_aes).TradeSha()
