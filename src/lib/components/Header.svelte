@@ -2,6 +2,7 @@
   import { admin } from "$lib/stores";
   import { auth, db } from "$lib/config/firebase/firebase.config";
   import NewWebpay from './NewWebpay.svelte'
+  import AccountMenu from './AccountMenu.svelte'
   import {
     GoogleAuthProvider,
     signInWithPopup,
@@ -15,6 +16,7 @@
   // states
   let userInfo: UserInfo | null;
   let isAdmin: Boolean;
+  let showMenu: Boolean = false;
 
   admin.subscribe(value => {
     isAdmin = value
@@ -22,10 +24,11 @@
 
   const login = () => {
     if (userInfo) {
-      signOut(auth);
-      return;
+      showMenu = !showMenu
+      return
     }
     signInWithPopup(auth, provider)
+    showMenu = false
   }
   const checkToken = (user: User) => {
     user.getIdTokenResult()
@@ -51,7 +54,7 @@
 </script>
 
 <div
-  class="relative bg-black px-4 py-4 sm:px-6 lg:px-8 border-b border-gray-800"
+  class="relative bg-black px-4 py-4 sm:px-6 lg:px-8 border-b border-gray-800 overflow-visible"
 >
   <div class="relative mx-auto max-w-7xl">
     <div class="flex items-center justify-between">
@@ -64,7 +67,7 @@
         </a>
       </div>
 
-      <div class="flex sm:items-center sm:justify-end sm:space-x-4">
+      <div class="relative flex sm:items-center sm:justify-end sm:space-x-4">
         <NewWebpay user={userInfo}/>
         <button
           on:click={login}
@@ -77,6 +80,9 @@
             LogIn
           {/if}
         </button>
+        {#if userInfo && showMenu}
+          <AccountMenu />
+        {/if}
       </div>
     </div>
   </div>
