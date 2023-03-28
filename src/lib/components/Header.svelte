@@ -1,12 +1,11 @@
 <script lang="ts">
   import { admin } from "$lib/stores";
   import { auth, db } from "$lib/config/firebase/firebase.config";
-  import NewWebpay from './NewWebpay.svelte'
-  import AccountMenu from './AccountMenu.svelte'
+  import NewWebpay from "./NewWebpay.svelte";
+  import AccountMenu from "./AccountMenu.svelte";
   import {
     GoogleAuthProvider,
     signInWithPopup,
-    signOut,
     onAuthStateChanged,
   } from "firebase/auth";
   import { ref, onValue } from "firebase/database";
@@ -18,37 +17,36 @@
   let isAdmin: Boolean;
   let showMenu: Boolean = false;
 
-  admin.subscribe(value => {
-    isAdmin = value
-  })
+  admin.subscribe((value) => {
+    isAdmin = value;
+  });
 
   const login = () => {
     if (userInfo) {
-      showMenu = !showMenu
-      return
+      showMenu = !showMenu;
+      return;
     }
-    signInWithPopup(auth, provider)
-    showMenu = false
-  }
+    signInWithPopup(auth, provider);
+    showMenu = false;
+  };
   const checkToken = (user: User) => {
-    user.getIdTokenResult()
-      .then(idTokenResult => {
-        if (!!idTokenResult.claims.admin) admin.set(idTokenResult.claims.admin)
-        else admin.set(false)
-      })
-  }
+    user.getIdTokenResult().then((idTokenResult) => {
+      if (!!idTokenResult.claims.admin) admin.set(idTokenResult.claims.admin);
+      else admin.set(false);
+    });
+  };
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       userInfo = user;
-      checkToken(user)
-      const metadataRef = ref(db, 'metadata/' + user.uid + '/refreshTime');
+      checkToken(user);
+      const metadataRef = ref(db, "metadata/" + user.uid + "/refreshTime");
       onValue(metadataRef, async (snapshot) => {
         await user.getIdToken(true);
-        checkToken(user)
-      })
+        checkToken(user);
+      });
     } else {
       userInfo = null;
-      admin.set(false)
+      admin.set(false);
     }
   });
 </script>
@@ -68,14 +66,21 @@
       </div>
 
       <div class="relative flex sm:items-center sm:justify-end sm:space-x-4">
-        <NewWebpay user={userInfo}/>
+        <NewWebpay user={userInfo} />
         <button
           on:click={login}
           class="text-lg leading-loose tracking-wide font-extrabold relative"
         >
           {#if userInfo}
-            <img class="max-w-12 rounded-full mb-4px" src={userInfo.photoURL} alt="avatar"/>
-            <span class="absolute bottom-0 left-1/2 text-xs transform -translate-x-1/2">{#if isAdmin} admin {:else} basic {/if}</span>
+            <img
+              class="max-w-12 rounded-full mb-4px"
+              src={userInfo.photoURL}
+              alt="avatar"
+            />
+            <span
+              class="absolute bottom-0 left-1/2 text-xs transform -translate-x-1/2"
+              >{#if isAdmin} admin {:else} basic {/if}</span
+            >
           {:else}
             LogIn
           {/if}
