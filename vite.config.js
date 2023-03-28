@@ -4,9 +4,6 @@ import WindiCSS from 'vite-plugin-windicss';
 /** @type {import('vite').UserConfig} */
 const config = {
 	plugins: [sveltekit(), WindiCSS()],
-	optimizeDeps: {
-		include: ['sanity']
-	}
 };
 
 export default config;
