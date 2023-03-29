@@ -2,6 +2,11 @@ import { defineConfig } from 'windicss/helpers';
 import typography from 'windicss/plugin/typography';
 import aspectRatio from 'windicss/plugin/aspect-ratio';
 
+const codeEditorFontSize = "1rem";
+const codeEditorLineHeight = "1.25rem";
+const lineNumbersWidth = "4rem";
+const lineNumbersFontSize = codeEditorFontSize;
+
 export default defineConfig({
 	darkMode: 'class',
 	extract: {
@@ -63,6 +68,33 @@ export default defineConfig({
 					800: 'hsl(240, 40%, 16%)',
 					900: 'hsl(240, 43%, 9%)',
 				},
+			},
+			width: {
+				"codeEditor": `calc(100% - ${lineNumbersWidth})`,
+				"lineNumbers": lineNumbersWidth,
+			},
+			backgroundColor: {
+				"codeEditor": "#f5f2f0",
+			},
+			textColor: {
+				"lineNumbers": "rgba(0, 0, 0, 0.2)",
+				"lineNumbersActive": "rgba(0, 0, 0, 0.7)",
+			},
+			fontSize: {
+				"codeEditor": [codeEditorFontSize, codeEditorLineHeight],
+				"lineNumbers": [lineNumbersFontSize, codeEditorLineHeight],
+			},
+			fontFamily: {
+				"codeEditor": [
+					"ui-monospace",
+					"SFMono-Regular",
+					"Menlo",
+					"Monaco",
+					"Consolas",
+					"Liberation Mono",
+					"Courier New",
+					"monospace",
+				],
 			},
 		},
 	},

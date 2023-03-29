@@ -3,7 +3,9 @@
   import { collection, addDoc } from "firebase/firestore";
   import { onAuthStateChanged } from "firebase/auth";
   import type { User } from "firebase/auth";
-  import RichEditor from "$lib/components/RichEditor.svelte";
+  import Markdown from "$lib/components/Markdown.svelte";
+  import Editor from "$lib/components/svelte-highlighted-code-editor";
+
   let isAdmin: Boolean = false;
 
   const checkToken = (user: User) => {
@@ -20,6 +22,7 @@
 
   let title = "";
   let content = "";
+  $: console.log(content)
 
   async function savePost() {
     await addDoc(collection(store, "posts"), {
@@ -35,12 +38,18 @@
     <label>
       Title:
       <input type="text" bind:value={title} />
-    </label>
-    <RichEditor />
+    </label><br>
+    <div class="flex">
+      <div class="text-black flex-1">
+        <Editor bind:value={content} />
+      </div>
+      <div class="flex-1 p-3">
+        <Markdown source={content} />
+      </div>
+    </div>
+
     <button type="submit">Save</button>
   </form>
 {/if}
 
-<style>
-  @import "https://cdn.quilljs.com/1.3.6/quill.snow.css";
-</style>
+

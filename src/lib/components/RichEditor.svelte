@@ -27,6 +27,10 @@
   });
 </script>
 
+<style>
+  @import "https://cdn.quilljs.com/1.3.6/quill.snow.css";
+</style>
+
 <div class="editor-wrapper">
   <div bind:this={editor} />
 </div>
