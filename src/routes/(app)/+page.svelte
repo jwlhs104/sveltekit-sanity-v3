@@ -4,8 +4,12 @@
   let isAdmin: boolean;
 
   admin.subscribe((value: boolean) => {
-    isAdmin = value;
-  });
+    isAdmin = value
+  })
+
+  export let data;
+
+  $: ({ posts } = data);
 </script>
 
 <svelte:head>
@@ -52,6 +56,74 @@
       <p class="mx-auto mt-3 max-w-xl text-lg text-gray-500 sm:mt-4">
         Welcome to my blog
       </p>
+    </div>
+
+    <div class="w-full  mt-12">
+      {#if posts && posts.length > 0 && isAdmin}
+        <div class="mx-auto grid max-w-lg gap-5 lg:max-w-none lg:grid-cols-3">
+          {#each posts as post}
+            <a href="/posts/{post.slug}">
+              <div class="flex flex-col overflow-hidden rounded-lg shadow-lg">
+                <div class="flex-shrink-0">
+                  {#if post.coverImage}
+                    <img
+                      class="h-48 w-full object-cover"
+                      src={post.coverImage}
+                      alt=""
+                    />
+                  {/if}
+                </div>
+                <div class="flex flex-1 flex-col justify-between bg-white p-6">
+                  <div class="flex-1">
+                    <p class="text-sm font-medium text-indigo-600">Article</p>
+                    <div class="mt-2 block">
+                      <p class="text-xl font-semibold text-gray-900">
+                        {post.title}
+                      </p>
+
+                      <p class="mt-3 text-base text-gray-500">
+                        {post.content.slice(0, 100)}...
+                      </p>
+                    </div>
+                  </div>
+                  <div class="mt-6 flex items-center">
+                    <div class="flex-shrink-0">
+                      <span class="sr-only">Author Image</span>
+                      {#if post.author}
+                        <img
+                          class="h-10 w-10 rounded-full"
+                          src={post.author.picture}
+                          alt=""
+                        />
+                      {/if}
+                    </div>
+                    {#if post.author}
+                      <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-900">
+                          {post.author.name}
+                        </p>
+                        <div class="flex space-x-1 text-sm text-gray-500">
+                          <time datetime="2020-03-16">
+                            {new Date(post.date).toLocaleDateString()}
+                          </time>
+                        </div>
+                      </div>
+                    {/if}
+                  </div>
+                </div>
+              </div>
+            </a>
+          {/each}
+        </div>
+      {:else}
+        <div class="flex items-center justify-center">
+          <span
+            class="inline-flex rounded-full bg-dark-800 px-4 py-2 text-base font-semibold leading-5 text-gray-400"
+          >
+            No posts found
+          </span>
+        </div>
+      {/if}
     </div>
   </div>
 </div>

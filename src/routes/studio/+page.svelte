@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { auth, store } from "$lib/config/firebase/firebase.config";
+  import { auth, store, storage } from "$lib/config/firebase/firebase.config";
   import { collection, addDoc } from "firebase/firestore";
+  import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
   import { onAuthStateChanged } from "firebase/auth";
   import type { User } from "firebase/auth";
   import Markdown from "$lib/components/Markdown.svelte";
@@ -22,13 +23,21 @@
 
   let title = "";
   let content = "";
+  let file = null;
   $: console.log(content)
 
   async function savePost() {
+
+    let fileUrl = "";
+    if (file) {
+      const storageRef = ref(storage, file.name);
+      await uploadBytes(storageRef, file)
+      fileUrl = await getDownloadURL(storageRef)
+    }
     await addDoc(collection(store, "posts"), {
       title,
       content,
-      createdAt: new Date(),
+      coverImage: fileUrl
     });
   }
 </script>
@@ -47,6 +56,10 @@
         <Markdown source={content} />
       </div>
     </div>
+    <label>
+      Image:
+      <input type="file" accept="image/*" on:change={(event) => file = event.target.files[0]} />
+    </label><br>
 
     <button type="submit">Save</button>
   </form>
